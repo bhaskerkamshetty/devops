@@ -1,0 +1,2 @@
+alias s='read -p "Enter IP Address : " ip && ssh root@$ip'
+alias cs='read -p "Enter IP Address : " ip && read -p "Enter Private Key File Path : " key && read -p "Enter Username : " user && ssh -i $key $user@$ip'

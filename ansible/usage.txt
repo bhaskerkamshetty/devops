@@ -1,0 +1,14 @@
+#Adhoc Command Linux
+ansible -i inventory all -m "shell" -a "ls -l"
+
+#Adhoc Command Windows
+ansible -i inventory all -m "raw" -a "ls Desktop"
+
+#Playbook Execution
+ansible-playbook -i inventory filename.yml
+
+#To view available modules
+ansible-galaxy collection list
+
+#To install windows module
+ansible-galaxy collection install ansible.windows

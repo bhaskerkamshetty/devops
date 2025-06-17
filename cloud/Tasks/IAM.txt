@@ -1,0 +1,35 @@
+1. AWS Account creation |||||DONE|||||
+2. Enable MFA for root user |||||DONE|||||
+3. Enable MFA for IAM Users |||||DONE|||||
+4. Create IAM user and give administrator access |||||DONE|||||
+5. Create IAM user and give only s3 & Ec2 full access |||||DONE|||||
+6. Attach RDS full access policy to already created IAM user |||||DONE|||||
+7. Create Multiple users and add them into one IAM group - For that group create policy allow only to use s3 & ec2 |||||DONE|||||
+8. Custom Sign-in URL for IAM users in the account |||||DONE|||||
+9. Manage any user created in the previous exercise by resetting the password and force the user to change the password. Login as the user and check whether it is forcing to change the password |||||DONE|||||
+10. Change Password of IAM user |||||DONE|||||
+11. Disable & enable IAM users |||||DONE|||||
+12. What is diff between Power user and root user in AWS  (PowerUserAccess AWS Managed Policy doesnot have access to Users & Group Mgmt) |||||DONE|||||
+13. I have IAM user – User is having Ec2 & RDS full access and attached same user to group – Group having S3 & Cloud front full access. Now user what kind of services having permissions.  EC2, RDS, S3 & Cloud Front |||||DONE|||||
+14. Create IAM role and give access only to s3 |||||DONE|||||
+15. Create IAM role and attach IAM role to ec2 instance. |||||DONE|||||
+16. Create IAM user and give privileges to stop & start specific ec2 instance |||||DONE|||||
+17. Create 3 groups (1 with EC2 & S3 admin, 1 with RDS admin and 1 with IAM admin) and create 3 users assigned to each group. Login as these users and check the behaviour. |||||DONE|||||
+18. Set the password policy for IAM user with minimum 12 characters, at least 1 special character and one upper case. |||||DONE|||||
+19. Generate a policy for the below scenario:  a. To download only the billing details  b. To store the downloaded bill in a specific S3 bucket (not all) Not Possible in Free Tier Not Possible in Free Tier
+20. Delegate access (cross account) across AWS accounts using IAM roles |||||DONE|||||
+22. Create a service role for EC2 and give access to S3. Start an instance with the IAM role and check whether you can get the credentials using the below command in your instance |||||DONE|||||
+23. Create IAM user and give programmatic access (secret key & Access key) |||||DONE|||||
+24. Configure AWS access keys & secrete keys in windows & Linux |||||DONE|||||
+25. Monitoring, Auditing, and Logging Users and Resource Usage in AWS IAM |||||DONE||||| 
+26. Limiting Privileged User Access by Setting Permissions Boundaries in AWS IAM ******
+27. Preventing Deletion of an Amazon S3 Bucket Using a Resource-Based Policy ******
+28. Access keys, secrete keys & IAM roles are configured to ec2 – which permissions will it consider? Access keys, secrete keys only
+29. Install AWS CLI in windows & Linux |||||DONE|||||
+30. IAM user must invoke the services by using assume roles ******
+31. IAM user IP must be whitelist to access aws resources. - IP based login to the console. |||||DONE|||||
+32. AWS iam account must be block after three bad attempts ******
+33. IAM user Password reset for every 60 or 90 days |||||DONE|||||
+34. After 30 days account must be locked automatically. |||||DONE|||||
+35. Congigure multiple access keys and secrete keys in same instance –  modify credentials file in aws directory and use --profile profilename to switch user |||||DONE|||||
+36. How to check whether IAM role is attached or not to ec2 instance in server? aws ec2 describe-iam-instance-profile-asscoiations |||||DONE|||||

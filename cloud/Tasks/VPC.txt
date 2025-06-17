@@ -1,0 +1,67 @@
+1. In this task done following things
+               a. create an VPC
+               b. Create Public & Private subnets
+               c. create IGW & attach to VPC
+               d. Create route table and added routes to the internet
+2. Launch ec2 instance in above vpc and deploy static website , The static website must be access only from your public ip (Not to the entire world)            
+4. Create a public and private subnet. Create two instances (one in each subnet) and the instance in private subnet should get internet. 
+    Instance in private subnet should allow traffic only from  public     subnet. 
+4. Create two instances in two different vpc in same region and make them to ping to each other -VPC peering
+    over internal ip(local ip)
+5.Create two instances in two different vpc in two different region and make them to ping to each other over internal Ip (Private ip)
+6. Create two instances in two different vpc in two different region in two different aws accounts and make them to ping to each other over internal Ip (Private ip)
+7. Create 3 subnets such as “test”, “production” and “development” as private subnets.  Create 1 subnet named as “public” as public subnet. 
+      Launch 4 instances one for each  subnet as “test-server”, “prod-server”, “dev-server” and “Jumpbox-server” in the  respective subnets. 
+      Configure IGW in public subnet only. Configure Security Group in  such a way that you can login from “test” subnet only. 
+      The access between  “development” and “production” subnet should be blocked
+8. Create a VPC, one subnet and launch an instance inside this subnet. Try logging into  this instance by attaching elastic IP, IGW, etc. (This subnet is called as Public Subnet  since the traffic is routed through Internet Gateway)
+9. Create another private subnet, as an extension of previous problem. Launch another  instance inside this new subnet. Login to this second instance without attaching the  Elastic IP. (Hint: FTP the pem file to your first instance and login to the second  instance. This subnet is called as Private Subnet)
+10. After logging into the “private-instance”, try “sudo yum update” command. This will  not work because it is in private subnet. Try NAT Gateway and route the “private subnet” traffic through NAT by creating the appropriate route table.
+11. Launched ec2 instance using created vpc but EC2 instance has no public DNS - Please enable for DNS ?
+12. By default public IP is not enabled for public subnet instances. Modify the changes in the subnet level - how to that ?
+13. Enable Vpc flow logs to the VPC
+14. create elastic ip and associate instance
+15. Create VPC peering for private subnet instances for different vpc networks
+16. Copy data from ec2 instance to s3 , ec2 instance is not having internet access using vpc endpoints
+17. Configure Transit Gateway for a Multi-VPC Environment
+18. Create a Multi-Subnet VPC with Secure Access to Private Servers with Outbound Internet Access
+19. Building a Three-Tier Network VPC from Scratch in AWS
+
+
+
+
+
+
+
+
+vpc  
+1. In this task done following things
+               1. create an VPC
+               2. Create Public & Private subnets
+               3. create IGW & attach to VPC
+               4. Create route table and added routes to the internet
+5. Launch ec2 instance in above vpc and deploy static website , The static website must be access only from your public ip (Not to the entire world)
+               
+2. Create a public and private subnet. Create two instances (one in each subnet) and the instance in private subnet should get internet. 
+    Instance in private subnet should allow traffic only from  public     subnet.
+ 
+3. Create two instances in two different vpc in same region and make them to ping to each other -VPC peering
+    over internal ip(local ip)
+4.Create two instances in two different vpc in two different region and make them to ping to each other over internal Ip (Private ip)
+5. Create two instances in two different vpc in two different region in two different aws accounts and make them to ping to each other over internal Ip (Private ip)
+6. Create 3 subnets such as “test”, “production” and “development” as private subnets.  Create 1 subnet named as “public” as public subnet. 
+      Launch 4 instances one for each  subnet as “test-server”, “prod-server”, “dev-server” and “Jumpbox-server” in the  respective subnets. 
+      Configure IGW in public subnet only. Configure Security Group in  such a way that you can login from “test” subnet only. 
+      The access between  “development” and “production” subnet should be blocked
+7. Create a VPC, one subnet and launch an instance inside this subnet. Try logging into  this instance by attaching elastic IP, IGW, etc. (This subnet is called as Public Subnet  since the traffic is routed through Internet Gateway)
+8. Create another private subnet, as an extension of previous problem. Launch another  instance inside this new subnet. Login to this second instance without attaching the  Elastic IP. (Hint: FTP the pem file to your first instance and login to the second  instance. This subnet is called as Private Subnet)
+9. After logging into the “private-instance”, try “sudo yum update” command. This will  not work because it is in private subnet. Try NAT Gateway and route the “private subnet” traffic through NAT by creating the appropriate route table.
+10. Launched ec2 instance using created vpc but EC2 instance has no public DNS - Please enable for DNS ?
+11. By default public IP is not enabled for public subnet instances. Modify the changes in the subnet level - how to that ?
+12. Enable Vpc flow logs to the VPC
+13. create elastic ip and associate instance
+14. Create VPC peering for private subnet instances for different vpc networks
+15. Copy data from ec2 instance to s3 , ec2 instance is not having internet access using vpc endpoints
+16. Configure Transit Gateway for a Multi-VPC Environment
+17. Create a Multi-Subnet VPC with Secure Access to Private Servers with Outbound Internet Access
+18. Building a Three-Tier Network VPC from Scratch in AWS

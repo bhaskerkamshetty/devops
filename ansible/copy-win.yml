@@ -1,0 +1,13 @@
+---
+ - name: Copy Files to Windows Node Example
+   hosts: all
+   become: false
+   gather_facts: false
+   vars:
+    source: "sample-file.txt"
+    destination: "Desktop/sample-file.txt"
+   tasks:
+    - name: Coping {{ source }} to C:/Users/{{ ansible_user }}/{{ destination }}
+      ansible.windows.win_copy:
+        src: "{{ source }}"
+        dest: "{{ destination }}"

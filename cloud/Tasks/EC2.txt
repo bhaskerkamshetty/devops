@@ -1,0 +1,61 @@
+                                    EC2
+EC2 Tasks
+1.Launch ec2 instance using aws console
+2. Assign elastic IP to the ec2 instance
+3. Launch windows ec2 instance - windows ami
+4.Stop & Start the ec2 instance and observe the behaaviour - focus on Public ip
+5. Access the ec2 only from the your public IP using security group
+6. Create ec2 instance without public Ip and try to login.
+7. Create the AMI out of EC2 instance
+8. Create Snapshot using the ebs volume
+9. Create volume using snapshot 
+10. Create ec2 instance using AMI & snapshot
+11. Copy AMI to different account
+12. Copy snapshot to different account
+13. Encrypt the existing EBS volume - snapshot - new volume - enable encryption
+14. ATTACHING AMAZON secondary EBS VOLUME TO AN INSTANCE - lsblk - file -s /device name / mount point - mkfs - mount
+15. CREATING AN INSTANCE TO A NEW REGION BY COPYING AN AMI in the same account
+16. How to Resize EBS Volumes on AWS Ec2 - modify - 50 to 100 - login to the ec2 - lsblk - growpart - resize2fs (EXT4) , xfs_growfs (XFS)
+17. Launch Amazon Linux instance, deploy a different template and create the AMI. The website should be running on HTTP port no. 8080 instead of 80 - httpd.conf - listen port -8080 - instance sg -inbound rules -8080 - ip:8080
+18. Give minimum of 5 tags for any instance as follows:
+ a. Name
+ b. Owner
+ c. Technology
+ d. Department
+ e. Support person
+Try to find the instance using the “Tag Editor” using the above tags
+19. Try pinging the other instances using private IP address after logging into any instance. Hint: Understand about ICMP and see how to enable ICMP traffic between
+the instances.
+20. Start an instance and attach a new volume, format it, mount it to a directory
+21. Start a windows instance and see how to attach the secondary ebs volume
+22. copy the some content to the volume and take a snapshot of the volume. After the snapshot is created, delete the volume
+23.Create a new volume and provide the snapshot id created in the above. Attach the volume to an instance, mount it and check whether the website content is available
+in the volume. (Hint: Do not use ‘mkfs’ which will format the hard disk
+24. Attach the same volume to the windows instance and see whether you are able to access it from the windows as well
+25. How do I automate Amazon EBS Snapshots using DLM (Data Lifecycle Manager)?
+26.How can I turn on automatic encryption of new Amazon EBS volumes and snapshot copies created in my account? - ec2 dashboard - 
+27.How do I list the attachments or detachments history of a specific Amazon EBS volume using AWS CLI commands?
+28.Why isn’t my EBS volume increase reflected in my OS or Disk Management?
+29. How can I prevent my Amazon EBS volumes from being deleted when I terminate Amazon EC2 instances?
+30.How can I share an encrypted Amazon EBS volume with another AWS account?
+31.How do I expand the Amazon EBS root volume of my Amazon EC2 Windows instance?
+32.How do I deccrypt an encrypted EBS volume?
+33.Attach multiple security groups to the ec2 instance - 5sg
+34.Install Apache in linux using userdata scripts 
+35.How do I assign an existing IAM role to an EC2 instance?
+36.How do I move my EC2 instance to another subnet, Availability Zone, or VPC?
+37.How do I convert a .pem file into a .ppk, and vice versa, on Windows and Linux?
+38.How do I configure a secondary private IP address for my Amazon EC2 instance?
+39.Connect to Amazon EC2 file directory using Filezilla and SFTP and download some data to your local machine
+40.If suppose you lost the key pair but you need to login to the ec2 instance - What are the possibilities ?
+41. Change instance type from t2.micro to t2.medium 
+42. Change instance type from t2.micro to t2.medium  without downtime
+43. Change instance type from t2.micro to t2.medium  for nitro based hypervisors
+44. Intentionally corrupt disk - failed 2/2 status checks - resolve - wrong fstab entries
+45. Copy encrypted ebs volumes to another aws account 
+46. Copy encrypted AMI to another AWS Account 
+47. Make a document of troubleshoot Ec2 connectivity issues 
+48. Stop accidental termination for ec2 instances ?
+49. Launch instance store based volume ec2 instance 
+50.Deny few ips do not access to ec2 instance rest everyone has to be access 
+51. List out the default user names for AMIs

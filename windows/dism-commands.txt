@@ -1,0 +1,12 @@
+/* View Image */
+DISM /Get-WimInfo /WimFile:E:\sources\install.wim
+
+/* Create Image */
+DISM /Image:"E:" /Optimize-Image /Boot
+DISM /Capture-Image /ImageFile:"E:\Softwares\OS\WIN1020H2.esd" /CaptureDir:"D:" /Name:"Windows 10 20H2" /Description:"Basic Softwares 19-02-21" /Compress:max /CheckIntegrity
+
+/* Convert Image */
+DISM /Export-Image /SourceImageFile:install.esd /SourceIndex:6 /DestinationImageFile:install.esd /Compress:max /CheckIntegrity
+
+/* Export Image */
+DISM /Export-Image /SourceImageFile:"E:\sources\install.wim" /SourceIndex:6 /DestinationImageFile:C:\Users\Bhasker\Downloads\install.wim

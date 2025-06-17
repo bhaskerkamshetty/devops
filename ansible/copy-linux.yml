@@ -1,0 +1,16 @@
+---
+ - name: Copy Files to Linux Node Example
+   hosts: all
+   become: false
+   gather_facts: false
+   vars:
+    source: "sample-file.txt"
+    destination: "~/sample-file.txt"
+   tasks:
+    - name: Coping {{ source }} to all hosts at {{ destination }}
+      copy:
+        src: "{{ source }}"
+        dest: "{{ destination }}"
+        owner: root
+        group: root
+        mode: '0700'

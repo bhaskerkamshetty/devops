@@ -1,0 +1,25 @@
+S3
+ 
+ 
+1. Create S3 bucket with unique name
+2. Upload objects to the s3 bucket
+3. Upload folder to the s3 bucket
+4. Enable versioning for s3 bucket
+5. Add more content to the same file and upload multiples times to the same s3 bucket
+6. Delete object from the s3 bucket
+7. restore the same object from versioning
+8. Delete s3 bucket
+9. Host static website in linux ec2 instance
+10. Host static website in aws s3
+11. Write bucket policy for to allow only access from your ip
+12. Write bucket policy for to allow only access from applications
+13. Write bucket policy for to allow only access from particular iam role 
+14. Write bucket policy for to allow only access from iam users
+15. Write bucket policy for to allow only access to download the objects
+16. Setup Cross region replication for s3 to achieve high availability
+17. Enable logging for s3 objects
+18. Write life cycle rule for to delete objects older than 30 days
+19. Write life cycle rule for to move objects from one storage class to another storage clss
+20. Mount s3 bucket as a disk in linux machine
+21. create Copy , delete ojects using aws cli in s3
+22. Set up Cross-Region S3 Bucket Replication with different aws accounts
