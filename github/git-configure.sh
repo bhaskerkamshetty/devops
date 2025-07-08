@@ -5,7 +5,7 @@
 #Date: 19th February 2024
 #Usage: ./git-configure.sh "Full Name" emailid
 #Takes 2 command line arguments
-#Example: ./git-configure.sh "FirstName LastName" yourname@email.com
+#Example: ./git-configure.sh "FirstName LastName" "yourname@email.com"
 ##############################################################################
 
 #Configures Git
