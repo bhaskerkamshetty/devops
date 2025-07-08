@@ -13,3 +13,4 @@ git config --global user.name "$1"
 git config --global user.email "$2"
 git config --global init.defaultBranch main
 git config --global core.editor code
+cat ~/.gitconfig
