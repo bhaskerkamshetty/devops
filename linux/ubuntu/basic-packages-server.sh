@@ -29,5 +29,9 @@ apt-get install telnet -y
 echo "Installing Git"
 apt-get install git -y
 
+#Installs Cockpit
+echo "Installing Cockpit"
+apt-get install cockpit -y
+
 #Conclusion
 echo "Done. Installing"
