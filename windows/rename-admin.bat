@@ -33,3 +33,23 @@ net user NEWUSERNAME /active:yes
 net user NEWUSERNAME PASSWORD
 net user INITIALUSERNAME /delete
 shutdown.exe /r /t 00
+
+
+#PowerShell Commands
+$Prefix = "PREDEFINEDTEXT-"
+$SerialNumber = (Get-CimInstance -ClassName Win32_Bios).SerialNumber
+$ShortSerial = $SerialNumber.Trim().Substring($SerialNumber.Trim().Length - 4)
+$NewHostname = "$Prefix$ShortSerial"
+Write-Host "Current Hostname: $((Get-CimInstance -ClassName Win32_ComputerSystem).Name)"
+Write-Host "New Hostname will be: $NewHostname"
+Rename-Computer -NewName $NewHostname -Force -PassThru
+
+#PowerShell command to rename Administrator
+Rename-LocalUser -Name "Administrator" -NewName "Admin"
+net user Admin /active:yes
+net user Admin PASSWORD
+net user INITIALUSERNAME /delete
+
+#Restart Computer
+Restart-Computer -Force
+
