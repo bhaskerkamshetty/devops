@@ -25,6 +25,9 @@ set "short_serial=%serialnumber:~-4%"
 wmic computersystem where name="%computername%" call rename name="PREDEFINED-%short_serial%"
 endlocal
 
+rem #PowerShell Command to rename Administrator
+Rename-LocalUser -Name "Administrator" -NewName "NEWUSERNAME"
+rem #WMIC Command to rename Administrator
 wmic useraccount where name='Administrator' rename 'NEWUSERNAME'
 net user NEWUSERNAME /active:yes
 net user NEWUSERNAME PASSWORD
