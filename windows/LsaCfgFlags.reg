@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+; --- Path 1: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa ---
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa]
+"LsaCfgFlags"=dword:00000000
+
+; --- Path 2: HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGaurd ---
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGaurd]
+"LsaCfgFlags"=dword:00000000
