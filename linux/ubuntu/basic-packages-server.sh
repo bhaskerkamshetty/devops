@@ -6,8 +6,8 @@
 ############################################################
 
 #Installs Nano Text Editor
-echo "Installing Nano Text Editor"
-apt-get install nano -y
+echo "Installing Nano & Vi Text Editor"
+apt-get install nano vi -y
 
 #Installs Wget Tool
 echo "Installing Wget & Curl Tool"
