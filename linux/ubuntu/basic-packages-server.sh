@@ -6,8 +6,8 @@
 ############################################################
 
 #Installs Nano Text Editor
-echo "Installing Nano & Vi Text Editor"
-apt-get install nano vi -y
+echo "Installing Nano & Vim Text Editor"
+apt-get install nano vim -y
 
 #Installs Wget Tool
 echo "Installing Wget & Curl Tool"
@@ -19,11 +19,7 @@ apt-get install zip unzip -y
 
 #Installs Network Tools
 echo "Installing Network Tools"
-apt-get install net-tools iputils-ping -y
-
-#Installs Telnet
-echo "Installing Telnet"
-apt-get install telnet -y
+apt-get install net-tools iputils-ping telnet -y
 
 #Installs Git
 echo "Installing Git"
