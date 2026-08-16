@@ -1,25 +1,96 @@
-#PowerShell Commands
+# ==========================================
+# Self-Elevation Block (Run as Administrator)
+# ==========================================
+$currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
+if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Warning "Administrator rights required. Requesting elevation..."
+    
+    # Relaunch script with elevated privileges
+    $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $processInfo.FileName = "powershell.exe"
+    
+    if ($PSCommandPath) {
+        $processInfo.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    } else {
+        # Fallback if running directly from console/ISE
+        $processInfo.Arguments = "-NoProfile -ExecutionPolicy Bypass -Command `"$($MyInvocation.MyCommand.Definition)`""
+    }
+    
+    $processInfo.Verb = "runas"
+    
+    try {
+        [System.Diagnostics.Process]::Start($processInfo) | Out-Null
+        exit
+    } catch {
+        Write-Error "Failed to elevate: User cancelled UAC or lacks administrative credentials."
+        exit 1
+    }
+}
+
+# ==========================================
+# 1. Computer Rename
+# ==========================================
 $Prefix = "PREDEFINEDTEXT-"
 $SerialNumber = (Get-CimInstance -ClassName Win32_Bios).SerialNumber
-$ShortSerial = $SerialNumber.Trim().Substring($SerialNumber.Trim().Length - 4)
-$NewHostname = "$Prefix$ShortSerial"
-Write-Host "Current Hostname: $((Get-CimInstance -ClassName Win32_ComputerSystem).Name)"
-Write-Host "New Hostname will be: $NewHostname"
-Rename-Computer -NewName $NewHostname -Force -PassThru
 
-#PowerShell command to rename Administrator
-Rename-LocalUser -Name "Administrator" -NewName "Admin"
-net user Admin /active:yes
-net user Admin PASSWORD
-net user INITIALUSERNAME /delete
+if ($SerialNumber.Trim().Length -ge 4) {
+    $ShortSerial = $SerialNumber.Trim().Substring($SerialNumber.Trim().Length - 4)
+    $NewHostname = "$Prefix$ShortSerial"
+    
+    Write-Host "Current Hostname: $((Get-CimInstance -ClassName Win32_ComputerSystem).Name)" -ForegroundColor Cyan
+    Write-Host "Target Hostname:  $NewHostname" -ForegroundColor Cyan
+    
+    Rename-Computer -NewName $NewHostname -Force -PassThru
+} else {
+    Write-Warning "Serial number is shorter than 4 characters. Skipping rename."
+}
 
-#Restart Computer
+# ==========================================
+# 2. Local Account Management
+# ==========================================
+$NewLocalAdminName = "Admin"
+$LocalAdminPassword = "REPLACE_WITH_STRONG_PASSWORD" # Secure local password
+$UserToDelete = "INITIALUSERNAME"
+
+# Rename and activate built-in Administrator
+$builtinAdmin = Get-LocalUser | Where-Object { $_.SID -like "*-500" }
+if ($builtinAdmin) {
+    Rename-LocalUser -Name $builtinAdmin.Name -NewName $NewLocalAdminName -ErrorAction SilentlyContinue
+    Enable-LocalUser -Name $NewLocalAdminName
+    Set-LocalUser -Name $NewLocalAdminName -Password (ConvertTo-SecureString $LocalAdminPassword -AsPlainText -Force)
+    Write-Host "Local Administrator configured as '$NewLocalAdminName'." -ForegroundColor Green
+}
+
+# Remove initial setup account
+if (Get-LocalUser -Name $UserToDelete -ErrorAction SilentlyContinue) {
+    Remove-LocalUser -Name $UserToDelete
+    Write-Host "Removed temporary user: $UserToDelete" -ForegroundColor Green
+}
+
+# ==========================================
+# 3. Domain Join & Role Assignment
+# ==========================================
+$Domain = "DOMAIN.COM"
+$DomainUser = "DOMAIN-ADMIN"
+$DomainPassword = "DOMAIN_PASSWORD" # Alternatively use: (Get-Credential).Password
+
+$SecureDomainPassword = ConvertTo-SecureString $DomainPassword -AsPlainText -Force
+$DomainCredential = New-Object System.Management.Automation.PSCredential("$Domain\$DomainUser", $SecureDomainPassword)
+
+Write-Host "Joining domain $Domain..." -ForegroundColor Cyan
+Add-Computer -DomainName $Domain -Credential $DomainCredential -Force
+
+# Add Domain Admin group or user to local Administrators
+try {
+    Add-LocalGroupMember -Group "Administrators" -Member "$Domain\$DomainUser" -ErrorAction Stop
+    Write-Host "Added $Domain\$DomainUser to Local Administrators group." -ForegroundColor Green
+} catch {
+    Write-Warning "Could not add domain entity to local Administrators: $_"
+}
+
+# ==========================================
+# 4. Final Restart
+# ==========================================
+Write-Host "Operations complete. Restarting computer in 5 seconds..." -ForegroundColor Yellow
+Start-Sleep -Seconds 5
 Restart-Computer -Force
-
-$domain = "DOMAIN.COM" # Replace with your actual domain
-$username = "DOMAIN-ADMIN" # Replace with a user account that has domain join permissions
-$password = "PASSWORD" # Replace with the actual password
-$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
-Add-Computer -DomainName $domain -Credential $credential
-Add-LocalGroupMember -Group "Administrators" -Member "DOMAIN.COM\DOMAIN-ADMIN"
