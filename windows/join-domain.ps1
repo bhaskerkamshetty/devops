@@ -18,12 +18,22 @@ if (-not $isAdministrator) {
 }
 
 # ==========================================
-# Domain Join & Group Member Configuration
+# Domain Join & Configuration Settings
 # ==========================================
-$domain = "DOMAIN.COM"                 # Replace with your actual domain
-$username = "DOMAIN\DOMAIN-ADMIN"       # Replace with admin account (format: DOMAIN\Admin or user@domain.com)
-$password = "PASSWORD"                 # Replace with your actual password
-$userToAdd = "DOMAIN\USERNAME"         # User/group to add to local Administrators (format: DOMAIN\User)
+$domain   = "DOMAIN.COM"                  # Replace with your actual domain
+$username = "DOMAIN\DOMAIN-ADMIN"        # Domain join admin account
+$password = "PASSWORD"                   # Replace with your actual password
+
+# Prompt for the user to add to the local Administrators group
+$inputUser = Read-Host "Enter the username to add to Local Administrators (e.g., username or DOMAIN\username)"
+
+# Automatically prepend the domain prefix if only a plain username was entered
+if ($inputUser -notmatch '\\' -and $inputUser -notmatch '@') {
+    $domainPrefix = $domain.Split('.')[0]
+    $userToAdd = "$domainPrefix\$inputUser"
+} else {
+    $userToAdd = $inputUser
+}
 
 try {
     # 1. Create secure credentials
@@ -31,7 +41,7 @@ try {
     $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
 
     # 2. Join Computer to Domain
-    Write-Host "Joining computer to domain '$domain'..." -ForegroundColor Cyan
+    Write-Host "`nJoining computer to domain '$domain'..." -ForegroundColor Cyan
     Add-Computer -DomainName $domain -Credential $credential -ErrorAction Stop
     Write-Host "Successfully joined domain '$domain'." -ForegroundColor Green
 
@@ -40,7 +50,7 @@ try {
     Add-LocalGroupMember -Group "Administrators" -Member $userToAdd -ErrorAction Stop
     Write-Host "Successfully added '$userToAdd' to local Administrators." -ForegroundColor Green
 
-    # 4. Optional: Prompt to restart (domain join requires a restart to take effect)
+    # 4. Prompt to restart
     Write-Host "`nA restart is required to complete the domain join." -ForegroundColor Yellow
     $restart = Read-Host "Do you want to restart now? (Y/N)"
     if ($restart -eq 'Y' -or $restart -eq 'y') {
