@@ -68,29 +68,8 @@ if (Get-LocalUser -Name $UserToDelete -ErrorAction SilentlyContinue) {
 }
 
 # ==========================================
-# 3. Domain Join & Role Assignment
+# 3. Final Restart
 # ==========================================
-$Domain = "DOMAIN.COM"
-$DomainUser = "DOMAIN-ADMIN"
-$DomainPassword = "DOMAIN_PASSWORD" # Alternatively use: (Get-Credential).Password
-
-$SecureDomainPassword = ConvertTo-SecureString $DomainPassword -AsPlainText -Force
-$DomainCredential = New-Object System.Management.Automation.PSCredential("$Domain\$DomainUser", $SecureDomainPassword)
-
-Write-Host "Joining domain $Domain..." -ForegroundColor Cyan
-Add-Computer -DomainName $Domain -Credential $DomainCredential -Force
-
-# Add Domain Admin group or user to local Administrators
-try {
-    Add-LocalGroupMember -Group "Administrators" -Member "$Domain\$DomainUser" -ErrorAction Stop
-    Write-Host "Added $Domain\$DomainUser to Local Administrators group." -ForegroundColor Green
-} catch {
-    Write-Warning "Could not add domain entity to local Administrators: $_"
-}
-
-# ==========================================
-# 4. Final Restart
-# ==========================================
-Write-Host "Operations complete. Restarting computer in 5 seconds..." -ForegroundColor Yellow
-Start-Sleep -Seconds 5
+Write-Host "Operations complete. Restarting computer in 0 seconds..." -ForegroundColor Yellow
+Start-Sleep -Seconds 0
 Restart-Computer -Force
