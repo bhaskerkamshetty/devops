@@ -11,80 +11,132 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
-:: Set working directory to script location
-cd /d "%~dp0"
+:: Lock root working directory
+set "ROOT_DIR=%~dp0"
+cd /d "%ROOT_DIR%"
 
-:: Set ANSI Color Codes
-set "ESC="
+:: Generate safe ANSI color codes dynamically
+for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
 set "GREEN=%ESC%[92m"
 set "RED=%ESC%[91m"
-set "YELLOW=%ESC%[93m"
+set "CYAN=%ESC%[96m"
 set "RESET=%ESC%[0m"
 
 echo ===================================================
-echo       Silent Software Installer - Admin Mode
+echo       Silent Software Batch Installer
 echo ===================================================
 echo.
 
 :: ============================================================================
-:: 2. INSTALLATION TARGETS
+:: 2. CONFIGURED SOFTWARE LIST
 :: ============================================================================
+set "TOTAL=0"
 
-:: Target 1: MSI Installer
-if exist "installer.msi" (
-    <nul set /p="Installing MSI package... "
-    msiexec /i "%~dp0installer.msi" /qn /norestart
-    call :CheckStatus
-) else (
-    echo %YELLOW%[SKIPPED] installer.msi not found.%RESET%
+:: --- App 1: Oracle JRE ---
+set /a TOTAL+=1
+set "NAME[!TOTAL!]=Oracle JRE 8u491"
+set "PATH[!TOTAL!]=B:\Apps\Softwares\jre-8u491-windows-x64.exe"
+set "ARGS[!TOTAL!]=/s"
+
+:: --- App 2: 7-Zip ---
+set /a TOTAL+=1
+set "NAME[!TOTAL!]=7-Zip 64-bit"
+set "PATH[!TOTAL!]=B:\Apps\Softwares\7z2602-x64.exe"
+set "ARGS[!TOTAL!]=/S"
+
+:: --- App 3: Microsoft 365 Batch Script ---
+set /a TOTAL+=1
+set "NAME[!TOTAL!]=Microsoft 365"
+set "PATH[!TOTAL!]=B:\Apps\Softwares\M365\install_m365.bat"
+set "ARGS[!TOTAL!]="
+
+:: ============================================================================
+:: 3. INITIALIZE SUMMARY COUNTERS
+:: ============================================================================
+set "COUNT_SUCCESS=0"
+set "COUNT_FAILED=0"
+set "COUNT_NOTFOUND=0"
+
+:: ============================================================================
+:: 4. EXECUTION LOOP
+:: ============================================================================
+for /L %%i in (1, 1, %TOTAL%) do (
+    set "CURRENT_INDEX=%%i"
+    set "CURRENT_NAME=!NAME[%%i]!"
+    set "CURRENT_PATH=!PATH[%%i]!"
+    set "CURRENT_ARGS=!ARGS[%%i]!"
+    
+    call :ExecuteInstall
 )
 
-:: Target 2: Inno Setup (.exe)
-if exist "inno_setup.exe" (
-    <nul set /p="Installing Inno Setup application... "
-    start /wait "" "%~dp0inno_setup.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
-    call :CheckStatus
-) else (
-    echo %YELLOW%[SKIPPED] inno_setup.exe not found.%RESET%
-)
+:: ============================================================================
+:: 5. SUMMARY REPORT
+:: ============================================================================
+set /a TOTAL_FAILED=COUNT_FAILED+COUNT_NOTFOUND
 
-:: Target 3: NSIS Installer (.exe)
-if exist "nsis_setup.exe" (
-    <nul set /p="Installing NSIS application... "
-    start /wait "" "%~dp0nsis_setup.exe" /S
-    call :CheckStatus
-) else (
-    echo %YELLOW%[SKIPPED] nsis_setup.exe not found.%RESET%
-)
-
-:: Target 4: Winget Package (7-Zip)
-<nul set /p="Installing 7-Zip via Winget... "
-winget install --id 7zip.7zip --silent --accept-source-agreements --accept-package-agreements >nul 2>&1
-call :CheckStatus
-
-:: Target 5: Winget Package (Google Chrome)
-<nul set /p="Installing Google Chrome via Winget... "
-winget install --id Google.Chrome --silent --accept-source-agreements --accept-package-agreements >nul 2>&1
-call :CheckStatus
-
-echo.
 echo ===================================================
-echo       All installations finished!
+echo                 INSTALLATION SUMMARY               
 echo ===================================================
+echo Total Configured Targets : %CYAN%!TOTAL!%RESET%
+echo Successfully Installed   : %GREEN%!COUNT_SUCCESS!%RESET%
+echo Failed Installations     : %RED%!COUNT_FAILED!%RESET%
+echo Missing File Paths       : %RED%!COUNT_NOTFOUND!%RESET%
+echo ===================================================
+
+if !TOTAL_FAILED! equ 0 (
+    echo %GREEN%All packages installed successfully!%RESET%
+) else (
+    echo %RED%Some installations encountered errors. Check logs above.%RESET%
+)
 echo.
 pause
 exit /b
 
 :: ============================================================================
-:: 3. STATUS HELPER FUNCTION
+:: 6. INSTALLATION SUBROUTINE
 :: ============================================================================
-:CheckStatus
-:: Common success codes: 0 = OK, 3010 = Success (Reboot required)
-if %errorlevel% equ 0 (
-    echo %GREEN%[SUCCESS]%RESET%
-) else if %errorlevel% equ 3010 (
-    echo %GREEN%[SUCCESS - REBOOT REQUIRED]%RESET%
-) else (
-    echo %RED%[FAILED] (Error Code: %errorlevel%)%RESET%
+:ExecuteInstall
+echo [!CURRENT_INDEX!/%TOTAL%] Processing !CURRENT_NAME!...
+
+if not exist "!CURRENT_PATH!" (
+    echo       Result: %RED%[FAILED - FILE PATH DOES NOT EXIST]%RESET%
+    echo       Target: "!CURRENT_PATH!"
+    set /a COUNT_NOTFOUND+=1
+    echo.
+    exit /b 0
 )
-exit /b
+
+echo       Installing...
+
+set "EXT=!CURRENT_PATH:~-4!"
+
+:: Handle batch files: extract folder and change directory before running
+if /i "!EXT!"==".bat" (
+    for %%F in ("!CURRENT_PATH!") do cd /d "%%~dpF"
+    cmd.exe /c call "!CURRENT_PATH!" !CURRENT_ARGS!
+    cd /d "%ROOT_DIR%"
+) else if /i "!EXT!"==".cmd" (
+    for %%F in ("!CURRENT_PATH!") do cd /d "%%~dpF"
+    cmd.exe /c call "!CURRENT_PATH!" !CURRENT_ARGS!
+    cd /d "%ROOT_DIR%"
+) else if /i "!EXT!"==".msi" (
+    msiexec /i "!CURRENT_PATH!" !CURRENT_ARGS!
+) else (
+    start /wait "" "!CURRENT_PATH!" !CURRENT_ARGS!
+)
+
+set "RUN_CODE=!errorlevel!"
+
+if !RUN_CODE! equ 0 (
+    echo       Result: %GREEN%[SUCCESS]%RESET%
+    set /a COUNT_SUCCESS+=1
+) else if !RUN_CODE! equ 3010 (
+    echo       Result: %GREEN%[SUCCESS - REBOOT REQUIRED]%RESET%
+    set /a COUNT_SUCCESS+=1
+) else (
+    echo       Result: %RED%[FAILED - Exit Code: !RUN_CODE!]%RESET%
+    set /a COUNT_FAILED+=1
+)
+
+echo.
+exit /b 0
