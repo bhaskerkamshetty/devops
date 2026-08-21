@@ -10,7 +10,12 @@ echo ===================================================
 echo Configuring Hostname, sys_admin Account, and Bypassing OOBE
 echo ===================================================
 
-:: 1. Set Hostname (PREFIX-LAST4 of Serial Number)
+:: 1. Enable built-in Administrator, set password, and rename to sys_admin
+net user Administrator Admin@123 /active:yes
+net user Administrator /passwordchg:yes
+wmic useraccount where name='Administrator' rename sys_admin
+
+:: 2. Set Hostname (PREFIX-LAST4 of Serial Number)
 for /f "skip=1 delims=" %%A in ('wmic bios get serialnumber') do (
     for /f "tokens=*" %%B in ("%%A") do (
         if not defined RAW_SERIAL set "RAW_SERIAL=%%B"
@@ -24,20 +29,18 @@ set "NEW_HOSTNAME=%PREFIX%-%SERIAL_LAST4%"
 echo Setting Computer Name to: %NEW_HOSTNAME%
 wmic computersystem where name="%COMPUTERNAME%" rename "%NEW_HOSTNAME%"
 
-:: 2. Enable Administrator, set password, and rename to sys_admin
-net user Administrator Admin@123 /active:yes
-net user Administrator /passwordchg:yes
-wmic useraccount where name='Administrator' rename sys_admin
-
-:: 3. Force Windows Setup Engine to Mark OOBE as Complete
-reg add "HKLM\SYSTEM\Setup" /v "OOBEInProgress" /t REG_DWORD /d 0 /f
-reg add "HKLM\SYSTEM\Setup" /v "SetupPhase" /t REG_DWORD /d 0 /f
+:: 3. Clear Setup Boot Execution and Mark Setup as Completed
+reg add "HKLM\SYSTEM\Setup" /v "CmdLine" /t REG_SZ /d "" /f
 reg add "HKLM\SYSTEM\Setup" /v "SetupType" /t REG_DWORD /d 0 /f
 reg add "HKLM\SYSTEM\Setup" /v "SystemSetupInProgress" /t REG_DWORD /d 0 /f
-reg add "HKLM\SYSTEM\Setup\Status\ChildCompletion" /v "Setup.exe" /t REG_DWORD /d 3 /f
-reg add "HKLM\SYSTEM\Setup\Status\ChildCompletion" /v "audit.exe" /t REG_DWORD /d 3 /f
-reg add "HKLM\SYSTEM\Setup\Status\ChildCompletion" /v "oobe.exe" /t REG_DWORD /d 3 /f
+reg add "HKLM\SYSTEM\Setup" /v "OOBEInProgress" /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\Setup" /v "SetupPhase" /t REG_DWORD /d 0 /f
 
-:: 4. Terminate OOBE and reboot directly to the standard Login Screen
+:: 4. Prevent OOBE service from re-triggering at next boot
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v "SetupDisplayedProductKey" /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v "OOBEExecuted" /t REG_DWORD /d 1 /f
+
+:: 5. Force-kill setup process and immediately force-reboot
 taskkill /f /im msoobe.exe >nul 2>&1
-shutdown /r /t 0
+taskkill /f /im oobe.exe >nul 2>&1
+shutdown /r /f /t 0
