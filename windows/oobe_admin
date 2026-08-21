@@ -7,7 +7,7 @@ setlocal enabledelayedexpansion
 set "PREFIX=PREDEFINEDTEXT"
 
 echo ===================================================
-echo Configuring Hostname, sys_admin Account, and OOBE
+echo Configuring Hostname, sys_admin Account, and Bypassing OOBE
 echo ===================================================
 
 :: 1. Set Hostname (PREFIX-LAST4 of Serial Number)
@@ -29,12 +29,15 @@ net user Administrator Admin@123 /active:yes
 net user Administrator /passwordchg:yes
 wmic useraccount where name='Administrator' rename sys_admin
 
-:: 3. Skip OOBE initial user creation and privacy screens
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v "SkipMachineOOBE" /t REG_DWORD /d 1 /f
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v "SkipUserOOBE" /t REG_DWORD /d 1 /f
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v "HideEULAPage" /t REG_DWORD /d 1 /f
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE" /v "ProtectYourPC" /t REG_DWORD /d 3 /f
+:: 3. Force Windows Setup Engine to Mark OOBE as Complete
+reg add "HKLM\SYSTEM\Setup" /v "OOBEInProgress" /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\Setup" /v "SetupPhase" /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\Setup" /v "SetupType" /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\Setup" /v "SystemSetupInProgress" /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\Setup\Status\ChildCompletion" /v "Setup.exe" /t REG_DWORD /d 3 /f
+reg add "HKLM\SYSTEM\Setup\Status\ChildCompletion" /v "audit.exe" /t REG_DWORD /d 3 /f
+reg add "HKLM\SYSTEM\Setup\Status\ChildCompletion" /v "oobe.exe" /t REG_DWORD /d 3 /f
 
-:: 4. Reboot directly to the login prompt
-echo Configuration complete. Rebooting to Windows login screen...
+:: 4. Terminate OOBE and reboot directly to the standard Login Screen
+taskkill /f /im msoobe.exe >nul 2>&1
 shutdown /r /t 0
